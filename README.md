@@ -1,4 +1,4 @@
-# GAN-generated-face-detector-base-on-boold-vessels
+# Deepfake-detector-based-on-blood-vessels
 
 
 Could not find shape_predictor_68_face_landmarks.dat. ?
