@@ -72,7 +72,7 @@ def load_facedetector(config):
     return face_detector, landmark_Predictor
 
 
-# TODO get eye image (a) and the binarized image of the eye image (b)
+# TODO get eye image (a) and the convex hull image of the eye image
 def get_crops_eye(face_detector, landmark_Predictor, img, input_file):
     faces = face_detector(img, 1)
     img_eye_crop = []
