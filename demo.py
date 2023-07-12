@@ -17,38 +17,20 @@ from utils.load import get_ids, split_train_val, get_imgs_and_masks, batch, grad
 
 def val(batch_size=1):
     net = models.load_model(os.path.join(config['output_path'], 'network_weight.h5'))
-    real_img = glob.glob(os.path.join(config['input_path_val'], 'real_*.png'))
-    style_img = glob.glob(os.path.join(config['input_path_val'], 'style_*.png'))
-
+    img = glob.glob(os.path.join(config['input_path_val'], '*.png'))
+    img = [r'./face_imgs/real_02532.png']
+    
     face_detector, landmark_Predictor = load_facedetector(config)
-    y_real = []
-    y_style = []
 
-    real_next = get_imgs(real_img, face_detector, landmark_Predictor)
-    style_next = get_imgs(style_img, face_detector, landmark_Predictor)
+    image_next = get_imgs(img, face_detector, landmark_Predictor) # Section 3.1  Sclera Segmentation 
 
     value = []
-    for i, (x, y) in enumerate(batch(real_next, batch_size)):
+    for i, (x, y) in enumerate(batch(image_next, batch_size)):
         x = list_transform_np(x)
         x = normalize(x)
         y_ = net(x)
         value.append(y)
-
-        y_real.append(np.array(y_)[0][0])
-
-    for i, (x, y) in enumerate(batch(style_next, batch_size)):
-        x = list_transform_np(x)
-        x = normalize(x)
-        y_ = net(x)
-        value.append(y)
-
-        y_real.append(np.array(y_)[0][0])
-
-
-    y_real = np.array(y_real).reshape(-1)
-    y = np.array(value).reshape(-1)
-    fp, tp, thr = roc_curve(y, y_real)
-    roc_auc = auc(fp, tp)
+        print('The prediction for this image is:', np.array(y_)[0][0])
 
 
 if __name__ == '__main__':
