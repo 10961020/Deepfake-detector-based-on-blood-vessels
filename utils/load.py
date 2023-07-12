@@ -34,7 +34,7 @@ def get_imgs_and_masks(img_list, dir_img, face_detector, landmark_Predictor):
 
 
 def to_cropped_imgs(img_list, dir_img, face_detector, landmark_Predictor):
-    ''' 图片处理 '''
+    ''' image processing '''
     for id_img in img_list:
         input_file = os.path.join(dir_img, id_img)
         img = resize_and_crop(cv2.imread(input_file), input_file, face_detector, landmark_Predictor)
@@ -52,7 +52,7 @@ def get_imgs(img_list, face_detector, landmark_Predictor):
 
 
 def to_cropped_imgs1(img_list, face_detector, landmark_Predictor):
-    ''' 图片处理 '''
+    ''' image processing '''
     for id_img in img_list:
         # input_file = os.path.join(dir_img, id_img)
         img = resize_and_crop(cv2.imread(id_img), id_img, face_detector, landmark_Predictor)
@@ -78,13 +78,13 @@ def resize_and_crop(img, input_file, face_detector, landmark_Predictor):
 
     for i in range(2):
         img_gray = cv2.cvtColor(img_eye[i], cv2.COLOR_BGR2GRAY)
-        _, th2 = cv2.threshold(img_gray, 0, 255, cv2.THRESH_OTSU)  # 前后景区分
+        _, th2 = cv2.threshold(img_gray, 0, 255, cv2.THRESH_OTSU)  # Otsu algorithm  th2 is the binarized image of the eye image (b)
         negative_mask = np.logical_not(img_eye_mask[i])
         negative_mask = binary_dilation(negative_mask)
         negative_mask = binary_dilation(negative_mask)
-        th2[negative_mask] = 0
+        th2[negative_mask] = 0  # The potential sclera mask (c)
 
-        # TODO 找到最大区域并填充
+        # TODO find the largest connected component
         contours, hierarchy = cv2.findContours(th2, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
         area = []
         for j in range(len(contours)):
@@ -95,7 +95,6 @@ def resize_and_crop(img, input_file, face_detector, landmark_Predictor):
                 if k != max_idx:
                     cv2.fillPoly(th2, [contours[k]], 0)
 
-        # TODO 腐蚀
         try:
             th2 = binary_erosion(th2)
             th2 = binary_erosion(th2)
@@ -116,21 +115,12 @@ def resize_and_crop(img, input_file, face_detector, landmark_Predictor):
             roi_image = cv2.resize(roi_image, (96, 96))
             sclera_list.append(roi_image)
         except:
-            # plt.figure()
-            # plt.subplot(121)
-            # plt.imshow(img_eye[i][...,::-1])
-            # plt.subplot(122)
-            # plt.imshow(th2, cmap='gray')
-            # plt.show()
             print(input_file)
             return None
 
 
     sclera_eye = np.concatenate([sclera_list[0],sclera_list[1]], axis=1)
     sclera_eye = cv2.resize(sclera_eye, (96, 96))
-
-    # 实验单眼效果
-    # sclera_eye = sclera_list[0]
 
     return np.expand_dims(np.array(sclera_eye, dtype=np.float32), axis=0)
 
