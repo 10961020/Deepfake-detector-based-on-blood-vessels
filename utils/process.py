@@ -44,7 +44,7 @@ def check_mkdir(dir_name):
         os.mkdir(dir_name)
 
 
-# TODO 得到眼部区域的mask
+# TODO the convex hull image of the eye mask
 def generate_convex_mask(shape, points_x, points_y):
     mask = np.zeros(shape, dtype=np.uint8)
 
@@ -59,7 +59,7 @@ def generate_convex_mask(shape, points_x, points_y):
     return mask
 
 
-# TODO 加载dlib人脸关键点检测
+# TODO load dlib
 def load_facedetector(config):
     """Loads dlib face and landmark detector."""
     # download if missing http://dlib.net/files/shape_predictor_68_face_landmarks.dat.bz2
@@ -72,7 +72,7 @@ def load_facedetector(config):
     return face_detector, landmark_Predictor
 
 
-# TODO 裁剪眼睛覆盖区域 320*280xp  返回裁剪后眼部区域以及对应的眼部mask
+# TODO get eye image (a) and the binarized image of the eye image (b)
 def get_crops_eye(face_detector, landmark_Predictor, img, input_file):
     faces = face_detector(img, 1)
     img_eye_crop = []
@@ -86,8 +86,6 @@ def get_crops_eye(face_detector, landmark_Predictor, img, input_file):
             eye_mark_local = landmarks_np[i]
             eye_mask = generate_convex_mask(img[..., 0].shape, eye_mark_local[..., 0], eye_mark_local[..., 1])
             eye_mask = eye_mask.astype('uint8')
-
-            # print(eye_mark_local[1][0]-eye_mark_local[-1][0], eye_mark_local[1][1]-eye_mark_local[-1][1]) # 高度阈值
 
             pt_pos_left, pt_pos_right = landmarks_np[i[0]], landmarks_np[i[3]]
             center_point = ((pt_pos_right[0] - pt_pos_left[0]) // 2 + pt_pos_left[0], (pt_pos_right[1] - pt_pos_left[1]) // 2 + pt_pos_left[1])
