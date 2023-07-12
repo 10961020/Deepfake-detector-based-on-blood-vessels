@@ -70,20 +70,36 @@ def normalize(x):
     return x / 255
 
 
-def resize_and_crop(img, input_file, face_detector, landmark_Predictor):
+def resize_and_crop(img, input_file, face_detector, landmark_Predictor, show_processing=0):
     sclera_list = []
     img_eye, img_eye_mask = get_crops_eye(face_detector, landmark_Predictor, img, input_file)
     if not len(img_eye):
         return None
 
+    if show_processing:
+        plt.figure()
+        plt.imshow(img_eye[0][..., ::-1])
+        plt.show()
+
     for i in range(2):
         img_gray = cv2.cvtColor(img_eye[i], cv2.COLOR_BGR2GRAY)
         _, th2 = cv2.threshold(img_gray, 0, 255, cv2.THRESH_OTSU)  # Otsu algorithm  th2 is the binarized image of the eye image (b)
+        
+        if show_processing:
+            plt.figure()
+            plt.imshow(th2, cmap='gray')
+            plt.show()
+        
         negative_mask = np.logical_not(img_eye_mask[i])
         negative_mask = binary_dilation(negative_mask)
         negative_mask = binary_dilation(negative_mask)
         th2[negative_mask] = 0  # The potential sclera mask (c)
-
+        
+        if show_processing:
+            plt.figure()
+            plt.imshow(th2, cmap='gray')
+            plt.show()
+        
         # TODO find the largest connected component (d)
         contours, hierarchy = cv2.findContours(th2, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
         area = []
@@ -94,11 +110,21 @@ def resize_and_crop(img, input_file, face_detector, landmark_Predictor):
             for k in range(len(contours)):
                 if k != max_idx:
                     cv2.fillPoly(th2, [contours[k]], 0)
-
+                
+        if show_processing:
+            plt.figure()
+            plt.imshow(th2, cmap='gray')
+            plt.show()
+        
         try:
             th2 = binary_erosion(th2)
             th2 = binary_erosion(th2)  # The sclera mask (e)
-
+        
+            if show_processing:
+                plt.figure()
+                plt.imshow(th2, cmap='gray')
+                plt.show()
+            
             mask_coords = np.where(th2 != 0)
             mask_min_y = np.min(mask_coords[0])
             mask_max_y = np.max(mask_coords[0])
