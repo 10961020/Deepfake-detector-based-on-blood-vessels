@@ -84,7 +84,7 @@ def resize_and_crop(img, input_file, face_detector, landmark_Predictor):
         negative_mask = binary_dilation(negative_mask)
         th2[negative_mask] = 0  # The potential sclera mask (c)
 
-        # TODO find the largest connected component
+        # TODO find the largest connected component (d)
         contours, hierarchy = cv2.findContours(th2, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
         area = []
         for j in range(len(contours)):
@@ -97,7 +97,7 @@ def resize_and_crop(img, input_file, face_detector, landmark_Predictor):
 
         try:
             th2 = binary_erosion(th2)
-            th2 = binary_erosion(th2)
+            th2 = binary_erosion(th2)  # The sclera mask (e)
 
             mask_coords = np.where(th2 != 0)
             mask_min_y = np.min(mask_coords[0])
