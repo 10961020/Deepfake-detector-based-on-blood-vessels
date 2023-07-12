@@ -10,4 +10,4 @@ stylegan_requests__processing.py includes downloading the StyleGAN2 dataset and 
 
 train.py contains training and validation sections.
 
-demo.py:  run on a single image. The process of sclera segmentation can be shown in the corresponding (a), (b), (c), (d), and (e) annotations (in ./utils/load.py).
+demo.py:  run on a single image. The process of sclera segmentation can be shown in the corresponding (a), (b), (c), (d), and (e) annotations (in ./utils/load.py line 73， set show_processing=0 to show_processing=1).
