@@ -9,7 +9,7 @@ import shutil
 import matplotlib.pyplot as plt
 from sklearn.metrics import roc_curve, auc
 
-# TODO 收集图片
+# TODO requests
 #
 # folder_path = './data_style_1024xp'
 # url_path = 'https://thispersondoesnotexist.com/image'
@@ -43,32 +43,32 @@ if not os.path.exists(after):
     os.makedirs(after)
 for root, dirs, files in os.walk(before):
     for file in files:
-        # TODO 中值滤波
+        # TODO Median filtering
         # img = cv2.imread(os.path.join(root, file))
         # img= cv2.medianBlur(img, 3)
         # cv2.imwrite(os.path.join(after, file[:-4] + '.png'), img)
 
-        # TODO 缩放
+        # TODO Resize
         # img = cv2.imread(os.path.join(root, file))
         # a = 0.8
         # img = cv2.resize(img, dsize=None, fx=a, fy=a)
         # cv2.imwrite(os.path.join(after, file[:-4] + '.png'), img)
 
-        # TODO 高斯模糊
+        # TODO Gaussian blur
         # img = cv2.imread(os.path.join(root, file))
         # img_blur = cv2.GaussianBlur(img, (3, 3), 0.2)
         # cv2.imwrite(os.path.join(after, file[:-4] + '.png'), img_blur)
 
-        # TODO 高斯噪声
+        # TODO Gaussian noise
         # img = cv2.imread(os.path.join(root, file))
         # noisy = skimage.util.random_noise(img, mode='gaussian', var=0.4)
         # cv2.imwrite(os.path.join(after, file[:-4] + '.png'), noisy+img)
 
-        # TODO JPEG压缩
+        # TODO JPEG compression
         img = cv2.imread(os.path.join(root, file))
         cv2.imwrite(os.path.join(after, file[:-4]+'.jpg'), img, [int(cv2.IMWRITE_JPEG_QUALITY), 95])
 
-        # TODO 旋转
+        # TODO Rotation
         # img = cv2.imread(os.path.join(root, file))
         # img = rotate_img(img, 5)
         # cv2.imwrite(os.path.join(after, file[:-4] + '.png'), img)
